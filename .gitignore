@@ -11,5 +11,6 @@ pids
 logs
 results
 
+lib
 node_modules
 npm-debug.log
