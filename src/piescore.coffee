@@ -33,6 +33,6 @@ exports.removeChildren = (element) ->
 
 exports.replaceChildren = (id, node) ->
   parent = window.document.getElementById id
-  underline.removeChildren parent
+  exports.removeChildren parent
   parent.appendChild node
 
