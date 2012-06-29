@@ -28,7 +28,7 @@ exports.attachEvent = (obj, eventName, callback) ->
       callback.apply(this, arguments)
 
 exports.removeChildren = (element) ->
-  argsToArray(element.children).forEach (x) ->
+  exports.argsToArray(element.children).forEach (x) ->
     element.removeChild(x)
 
 exports.replaceChildren = (id, node) ->
