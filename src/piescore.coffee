@@ -4,8 +4,8 @@ exports.makeObject = ->
     obj[arguments[i*2]] = arguments[i*2+1]
   obj
 
-exports.argsToArray = -> 
-  x for x in arguments
+exports.argsToArray = (args) ->
+  x for x in args
 
 exports.block = (f) -> f()
 
