@@ -2,7 +2,7 @@
   "name": "piescore",
   "description": "Utility functions",
   "main": "./lib/piescore.js",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "author": "Jakob Mattsson <jakob.mattsson@gmail.com> (jakobmattsson.se)",
   "repository": {
     "type": "git",
