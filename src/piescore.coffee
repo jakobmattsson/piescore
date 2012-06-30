@@ -75,7 +75,7 @@ exports.toMap = (array, keySelector, valueSelector) ->
   result
 
 exports.mapObjectAsync = (obj, f, callback) ->
-  kvs = π.toKeyValues(obj)
+  kvs = exports.toKeyValues(obj)
   async.map kvs.pluck('value'), f, (err, data) ->
     if err
       callback(err)
