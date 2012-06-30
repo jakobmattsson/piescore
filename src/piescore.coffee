@@ -79,7 +79,7 @@ exports.toMap = (array, keySelector, valueSelector) ->
 
 exports.mapObjectAsync = (obj, f, callback) ->
   kvs = exports.toKeyValues(obj)
-  async.map kvs.pluck('value'), f, (err, data) ->
+  async.map exports.pluck(kvs, 'value'), f, (err, data) ->
     if err
       callback(err)
       return
@@ -153,3 +153,5 @@ exports.parsePath = (url) ->
   a.href = url
   a.pathname + a.search + a.hash
 
+exports.pluck = (array, name) ->
+  array.map (x) -> x[name]
