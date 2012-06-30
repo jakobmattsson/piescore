@@ -1,3 +1,5 @@
+async = require 'async'
+
 exports.makeObject = ->
   obj = {}
   for i in [0..arguments.length/2]
