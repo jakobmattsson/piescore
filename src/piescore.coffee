@@ -36,3 +36,49 @@ exports.replaceChildren = (id, node) ->
   exports.removeChildren parent
   parent.appendChild node
 
+exports.prepend = (target, e) ->
+  if Array.isArray(target)
+    [e].concat(target)
+  else if typeof target == 'string'
+    e + target
+  else
+    throw 'Must be string or array'
+
+exports.append = (target, e) ->
+  if Array.isArray(target)
+    target.concat([e])
+  else if typeof target == 'string'
+    target + e
+  else
+    throw 'Must be string or array'
+
+exports.contains = (target, e) -> target.indexOf(e) != -1
+
+exports.toMap = (array, keySelector, valueSelector) ->
+  if typeof keySelector == 'string'
+    keySelectorString = keySelector
+    keySelector = (e) -> e[keySelectorString]
+
+  if typeof valueSelector == 'string'
+    valueSelectorString = valueSelector
+    valueSelector = (e) -> e[valueSelectorString]
+
+  if !valueSelector?
+    valueSelector = (e) -> e
+
+  result = {}
+  array.forEach (e) ->
+    result[keySelector(e)] = valueSelector(e)
+
+  result
+
+exports.mapObjectAsync = (obj, f, callback) ->
+  kvs = π.toKeyValues(obj)
+  async.map kvs.pluck('value'), f, (err, data) ->
+    if err
+      callback(err)
+      return
+    zipped = _.zip(kvs, data)
+    result = exports.toMap(zipped, ((x) -> x[0].key), '1')
+    callback null, result
+
