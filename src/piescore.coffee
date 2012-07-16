@@ -1,5 +1,6 @@
 async = require 'async'
 _s = require 'underscore.string'
+_ = require 'underscore'
 
 exports.submodules = {}
 
