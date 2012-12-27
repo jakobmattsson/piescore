@@ -2,23 +2,11 @@ async = require 'async'
 _s = require 'underscore.string'
 _ = require 'underscore'
 
+_.mixin require 'underscore.plus'
+
 exports.submodules = {}
 
-exports.makeObject = ->
-  obj = {}
-  for i in [0..arguments.length/2]
-    obj[arguments[i*2]] = arguments[i*2+1]
-  obj
-
-exports.argsToArray = (args) ->
-  x for x in args
-
-exports.block = (f) -> f()
-
-exports.toKeyValues = (source) ->
-  Object.keys(source).map (key) ->
-    key: key
-    value: source[key]
+## browser
 
 exports.attachEvent = (obj, eventName, callback) ->
   onEventName = "on" + eventName
@@ -34,7 +22,7 @@ exports.attachEvent = (obj, eventName, callback) ->
       callback.apply(this, arguments)
 
 exports.removeChildren = (element) ->
-  exports.argsToArray(element.children).forEach (x) ->
+  _(element.children).toArray().forEach (x) ->
     element.removeChild(x)
 
 exports.replaceChildren = (id, node) ->
@@ -42,50 +30,32 @@ exports.replaceChildren = (id, node) ->
   exports.removeChildren parent
   parent.appendChild node
 
-exports.prepend = (target, e) ->
-  if Array.isArray(target)
-    [e].concat(target)
-  else if typeof target == 'string'
-    e + target
-  else
-    throw 'Must be string or array'
+exports.parseOrigin = (url) ->
+  a = window.document.createElement 'a'
+  a.href = url
+  a.protocol + '//' + a.host
 
-exports.append = (target, e) ->
-  if Array.isArray(target)
-    target.concat([e])
-  else if typeof target == 'string'
-    target + e
-  else
-    throw 'Must be string or array'
+exports.parsePath = (url) ->
+  a = window.document.createElement 'a'
+  a.href = url
+  a.pathname + a.search + a.hash
 
-exports.contains = (target, e) -> target.indexOf(e) != -1
 
-exports.toMap = (array, keySelector, valueSelector) ->
-  if typeof keySelector == 'string'
-    keySelectorString = keySelector
-    keySelector = (e) -> e[keySelectorString]
 
-  if typeof valueSelector == 'string'
-    valueSelectorString = valueSelector
-    valueSelector = (e) -> e[valueSelectorString]
 
-  if !valueSelector?
-    valueSelector = (e) -> e
+# dunno
 
-  result = {}
-  array.forEach (e) ->
-    result[keySelector(e)] = valueSelector(e)
+exports.block = (f) -> f()
 
-  result
+
+
 
 exports.mapObjectAsync = (obj, f, callback) ->
-  kvs = exports.toKeyValues(obj)
-  async.map exports.pluck(kvs, 'value'), f, (err, data) ->
-    if err
-      callback(err)
-      return
+  kvs = _(obj).toKeyValues()
+  async.map _.pluck(kvs, 'value'), f, (err, data) ->
+    return callback(err) if err
     zipped = _.zip(kvs, data)
-    result = exports.toMap(zipped, ((x) -> x[0].key), '1')
+    result = _(zipped).toObject(((x) -> x[0].key), '1')
     callback null, result
 
 
@@ -143,16 +113,3 @@ exports.submodules.viaduct = (viaduct) ->
         callback({ code: body.code })
       else
         callback(null, body.body)
-
-exports.parseOrigin = (url) ->
-  a = window.document.createElement 'a'
-  a.href = url
-  a.protocol + '//' + a.host
-
-exports.parsePath = (url) ->
-  a = window.document.createElement 'a'
-  a.href = url
-  a.pathname + a.search + a.hash
-
-exports.pluck = (array, name) ->
-  array.map (x) -> x[name]
